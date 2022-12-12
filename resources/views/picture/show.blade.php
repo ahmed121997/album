@@ -45,11 +45,15 @@
                     @csrf
 
                     <div class="input-group mb-3">
-                        <input type="file" required name="images[]" class="form-control" id="inputGroupFile02" multiple="multiple"
+                        <input type="file" name="images[]" required class="form-control" id="inputGroupFile02" multiple="multiple"
                             accept="image/jpeg, image/png, image/jpg">
 
                         <label class="input-group-text" for="inputGroupFile02">Upload</label>
+
                     </div>
+                    @error('images')
+                        <div class="text-danger mb-3">{{ $message }}</div>
+                    @enderror
                     <button type="submit" class="btn btn-primary">Upload</button>
                 </form>
             </div>

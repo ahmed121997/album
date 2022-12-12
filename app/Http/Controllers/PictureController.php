@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Album;
 use App\Models\Picture;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class PictureController extends Controller
 {
@@ -35,8 +36,14 @@ class PictureController extends Controller
     {
 
         $album = Album::findOrFail($id);
+        $validator = Validator::make($request->all(), [
+            'images' => 'required|image',
+        ]);
 
-        $data = $this->saveMultipleImages($request, 'images');
+        if($validator->fails()) {
+            return back()->withErrors($validator);
+        }
+        $data = saveMultipleImages($request, 'images');
         foreach ($data as $i) {
             $album->pictures()->create([
                 'name' => $i,
@@ -71,18 +78,4 @@ class PictureController extends Controller
         return redirect()->back();
     }
 
-    function saveMultipleImages($request, $nameFile)
-    {
-        if ($request->hasfile($nameFile)) {
-            $i = 0;
-            $data = [];
-            foreach ($request->file($nameFile) as $image) {
-                $name =  time() . '_' . $i . '.' . $image->getClientOriginalExtension();
-                $image->move(public_path() . '/images/', $name);
-                $data[] = $name;
-                $i++;
-            }
-            return $data;
-        }
-    }
 }

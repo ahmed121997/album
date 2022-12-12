@@ -104,7 +104,7 @@ class AlbumController extends Controller
     {
         $user = auth()->user();
         $data = $user->albums;
-        // helpers function
+        // helpers
         return getDataTables($request, $data);
     }
 
