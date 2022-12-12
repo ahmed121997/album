@@ -5,8 +5,8 @@
 @section('content')
     <div class="container mt-5 text-center">
         <h2 class="mb-4">My Albums :</h2>
-        <div class="btn btn-primary"><a href="{{route('ablum.add')}}" class="btn btn-sm">Add Album</a></div>
-        <table class="table table-bordered yajra-datatable">
+        <div class="btn btn-primary"><a href="{{ route('ablum.add') }}" class="btn btn-sm">Add Album</a></div>
+        <table class="table table-bordered yajra-datatable cell-border">
             <thead>
                 <tr>
                     <th>No</th>
@@ -20,20 +20,23 @@
         </table>
     </div>
 
-    <div>
-        <canvas id="myChart"></canvas>
-      </div>
+    <div class="container mt-5">
+        <h3> Chart # of photos:
+        <canvas id="myChart" ></canvas>
+    </div>
 @endsection
+
+
 @section('scripts')
     <script type="text/javascript">
+                            /** datatables*/
         $(function() {
 
             var table = $('.yajra-datatable').DataTable({
                 processing: true,
                 serverSide: true,
                 ajax: "{{ route('ablums.list') }}",
-                columns: [
-                    {
+                columns: [{
                         data: 'DT_RowIndex',
                         name: 'DT_RowIndex'
                     },
@@ -50,34 +53,45 @@
                         data: 'action',
                         name: 'action',
                         orderable: true,
-                        searchable: true
+                        searchable: true,
+
                     },
                 ]
             });
 
         });
+            /*       chart js                */
+        const ctx = document.getElementById('myChart');
+
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: [
+                    @if (isset($albums))
+                        @for ($i = 0; $i < count($albums); $i++)
+                            "{{ $albums[$i] }}",
+                        @endfor
+                    @endif
+                ],
+                datasets: [{
+                    label: 'Number pictures in albums',
+                    data: [
+                        @if (isset($count))
+                            @for ($i = 0; $i < count($count); $i++)
+                                "{{ $count[$i] }}",
+                            @endfor
+                        @endif
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
     </script>
-
-<script>
-    const ctx = document.getElementById('myChart');
-
-    new Chart(ctx, {
-      type: 'bar',
-      data: {
-        labels: [@if(isset($albums)) @for($i=0;$i<count($albums);$i++) "{{$albums[$i]}}",  @endfor @endif],
-        datasets: [{
-          label: 'Number pictures in albums',
-          data:  [@if(isset($count)) @for($i=0;$i<count($count);$i++) "{{$count[$i]}}",  @endfor @endif],
-          borderWidth: 1
-        }]
-      },
-      options: {
-        scales: {
-          y: {
-            beginAtZero: true
-          }
-        }
-      }
-    });
-  </script>
 @endsection

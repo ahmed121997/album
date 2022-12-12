@@ -31,7 +31,6 @@ Route::get('album/delete/{id}', [AlbumController::class, 'destroy'])->name('ablu
 
 
 Route::get('picture/show/{album_id}', [PictureController::class, 'index'])->name('pictures.show');
-Route::get('picture/add', [PictureController::class, 'create'])->name('pictures.add');
 Route::post('picture/store/{id}', [PictureController::class, 'store'])->name('pictures.store');
 Route::get('picture/delete/{id}', [PictureController::class, 'destroy'])->name('picture.delete');
 Route::get('picture/change/{id}', [PictureController::class, 'change_album'])->name('picture.change.album');

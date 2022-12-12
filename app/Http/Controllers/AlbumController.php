@@ -3,11 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Album;
-use DataTables;
 use Illuminate\Support\Facades\Validator;
-
 use Illuminate\Http\Request;
-
+use Yajra\DataTables\Facades\DataTables;
 class AlbumController extends Controller
 {
     public function __construct()
@@ -22,10 +20,10 @@ class AlbumController extends Controller
      */
     public function index()
     {
-         $data = $this->getAllAlbums();
+        $data = $this->getAllAlbums();
         $albums = $data['albums'];
         $count = $data['count'];
-        return view('home',['albums'=>$albums,'count'=>$count]);
+        return view('home', ['albums' => $albums, 'count' => $count]);
     }
 
 
@@ -37,7 +35,7 @@ class AlbumController extends Controller
      */
     public function create()
     {
-        return view('create_album');
+        return view('album.create');
     }
 
     /**
@@ -48,16 +46,16 @@ class AlbumController extends Controller
      */
     public function store(Request $request)
     {
-        $validator = Validator::make($request->all(),[
+        $validator = Validator::make($request->all(), [
             'name' => 'required|max:255',
         ]);
         if ($validator->fails()) {
             return redirect('/album/create')
-                        ->withErrors($validator)
-                        ->withInput();
+                ->withErrors($validator)
+                ->withInput();
         }
-       Album::create(['name'=> $request->name,'user_id'=>auth()->user()->id]);
-       return redirect('/');
+        Album::create(['name' => $request->name, 'user_id' => auth()->user()->id]);
+        return redirect('/');
     }
 
 
@@ -71,7 +69,7 @@ class AlbumController extends Controller
     public function edit($id)
     {
         $res = Album::findOrFail($id);
-        return view('edit_album')->with('album',$res);
+        return view('album.edit')->with('album', $res);
     }
 
     /**
@@ -81,11 +79,11 @@ class AlbumController extends Controller
      * @param  \App\Models\c  $c
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request,$id)
+    public function update(Request $request, $id)
     {
         $res = Album::findOrFail($id);
-        $res->update(['name'=>$request->name]);
-       return redirect('/');
+        $res->update(['name' => $request->name]);
+        return redirect('/');
     }
 
     /**
@@ -105,32 +103,27 @@ class AlbumController extends Controller
     public function getAlbums(Request $request)
     {
         $user = auth()->user();
-
-        if ($request->ajax()) {
-            $data = $user->albums;
-
-            return Datatables::of($data)
-                ->addIndexColumn()
-                ->addColumn('action', function($row){
-                    $actionBtn =
-                    '<a href="picture/show/'.$row->id.'" class="show btn btn-warning btn-sm">Show</a>
-                     <a href="album/edit/'.$row->id.'" class="edit btn btn-success btn-sm">Edit</a>
-                      <a href="album/delete/'.$row->id.'" class="delete btn btn-danger btn-sm">Delete</a>';
-                    return $actionBtn;
-                })
-                ->rawColumns(['action'])
-                ->make(true);
-        }
+        $data = $user->albums;
+        // helpers function
+        return getDataTables($request, $data);
     }
 
-    public function getAllAlbums(){
+
+
+
+    /**
+     * function to get all Albums
+     */
+
+    public function getAllAlbums()
+    {
         $all_albums = Album::all();
         $array_albums = [];
         $count_pic = [];
-        foreach($all_albums as $album){
-            array_push($array_albums,$album->name);
-            array_push($count_pic,$album->pictures->count());
+        foreach ($all_albums as $album) {
+            array_push($array_albums, $album->name);
+            array_push($count_pic, $album->pictures->count());
         }
-        return ['albums'=>$array_albums,'count'=>$count_pic];
+        return ['albums' => $array_albums, 'count' => $count_pic];
     }
 }
