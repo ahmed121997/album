@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\AlbumController;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Routing\RouteGroup;
@@ -28,6 +29,6 @@ Route::get('/user/', function () {
 
 Route::post('login',[AuthController::class,'login'])->name('api.login');
 Route::post('register',[AuthController::class,'register'])->name('api.register');
-Route::group(['middleware'=>'auth:api','prefix'=>'api'],function(){
-
-});
+Route::post('logout',[AuthController::class,'logout'])->name('api.logout');
+Route::post('me',[AuthController::class,'getAuthenticatedUser'])->name('api.me');
+Route::resource('albums',AlbumController::class);

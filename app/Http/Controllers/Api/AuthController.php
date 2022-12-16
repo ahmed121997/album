@@ -8,6 +8,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Exception;
+use Illuminate\Support\Facades\Hash;
+use Laravel\Passport\RefreshToken;
+use Laravel\Passport\Token;
 
 class AuthController extends Controller
 {
@@ -59,7 +62,7 @@ class AuthController extends Controller
             $user = User::create([
                 'name'     => $request->name,
                 'email'    => $request->email,
-                'password' => bcrypt($request->password)
+                'password' => Hash::make($request->password)
             ]);
 
             $success['name']  = $user->name;
@@ -79,11 +82,19 @@ class AuthController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function logout()
-    {
-        auth()->logout();
+    public function logout(){
 
-        return sendResponse('logout','you loged out successfully !');
+       return  Auth::user();
+
+        return response()->json([
+            'message' => 'Successfully logged out'
+        ]);
+    }
+
+    public function getAuthenticatedUser(Request $request){
+
+        // return response()->json($request->user());
+        return response()->json(['user' => auth()->user()], 200);
     }
 
 }
