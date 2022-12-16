@@ -43,6 +43,40 @@ function saveMultipleImages($request, $nameFile)
     }
 }
 
+/**
+ * function sendResonse return resposne as json
+ */
+if(!function_exists('sendResponse')){
 
+    function sendResponse($resault, $message){
+        $respone = [
+            'success' => true,
+            'data'    => $resault,
+            'message' => $message,
+        ];
+        return response()->json($respone);
+    }
+
+}
+
+/**
+ * function sendResonse return response as json
+ */
+if(!function_exists('sendError')){
+
+    function sendError($error, $errorMessages =[], $code = 404){
+        $respone = [
+            'success' => false,
+            'message'    => $error
+        ];
+
+            if(!empty($errormessage)){
+
+                $respone['data'] = $errormessage;
+            }
+        return response()->json($respone,$code);
+    }
+
+}
 
 ?>

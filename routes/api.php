@@ -1,7 +1,10 @@
 <?php
 
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Routing\RouteGroup;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\AuthController;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,6 +17,17 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::get('/user/', function () {
+
+    $data = User::all();
+    if($data)
+        return response()->json($data,200);
+    return response()->json(['msg' =>"user not found"], 200);
+});
+
+
+Route::post('login',[AuthController::class,'login'])->name('api.login');
+Route::post('register',[AuthController::class,'register'])->name('api.register');
+Route::group(['middleware'=>'auth:api','prefix'=>'api'],function(){
+
 });
