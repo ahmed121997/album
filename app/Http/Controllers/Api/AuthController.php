@@ -14,6 +14,10 @@ use Laravel\Passport\Token;
 
 class AuthController extends Controller
 {
+    public function __construct()
+    {
+        return $this->middleware('auth:api')->except(['login','register']);
+    }
     /**
      * User login API method
      *
@@ -83,9 +87,8 @@ class AuthController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
     public function logout(){
-
-       return  Auth::user();
-
+        $user = auth()->guard('api')->user();
+        $user->token()->revoke();
         return response()->json([
             'message' => 'Successfully logged out'
         ]);
@@ -93,8 +96,9 @@ class AuthController extends Controller
 
     public function getAuthenticatedUser(Request $request){
 
-        // return response()->json($request->user());
-        return response()->json(['user' => auth()->user()], 200);
+        $user = auth()->guard('api')->user();
+
+        return sendResponse($user,'data of user logged now');
     }
 
 }
