@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -98,7 +99,7 @@ class AuthController extends Controller
 
         $user = auth()->guard('api')->user();
 
-        return sendResponse($user,'data of user logged now');
+        return sendResponse(new UserResource($user),'data of user logged now');
     }
 
 }
