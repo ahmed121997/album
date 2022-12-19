@@ -17,7 +17,7 @@ class AuthController extends Controller
 {
     public function __construct()
     {
-        return $this->middleware('auth:api')->except(['login','register']);
+        return $this->middleware('auth:api')->except(['login', 'register']);
     }
     /**
      * User login API method
@@ -87,19 +87,27 @@ class AuthController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function logout(){
-        $user = auth()->guard('api')->user();
+    public function logout()
+    {
+         $user = auth()->guard('api')->user();
         $user->token()->revoke();
         return response()->json([
             'message' => 'Successfully logged out'
         ]);
+
+        /** to logout from all device */
+       /*  $tokens =  $user->tokens->pluck('id');
+        Token::whereIn('id', $tokens)
+            ->update(['revoked' => true]);
+
+        RefreshToken::whereIn('access_token_id', $tokens)->update(['revoked' => true]); */
     }
 
-    public function getAuthenticatedUser(Request $request){
+    public function getAuthenticatedUser(Request $request)
+    {
 
         $user = auth()->guard('api')->user();
 
-        return sendResponse(new UserResource($user),'data of user logged now');
+        return sendResponse(new UserResource($user), 'data of user logged now');
     }
-
 }

@@ -18,17 +18,8 @@ use App\Http\Controllers\Api\AuthController;
 |
 */
 
-Route::get('/user/', function () {
-
-    $data = User::all();
-    if($data)
-        return response()->json($data,200);
-    return response()->json(['msg' =>"user not found"], 200);
-});
-
-
 Route::post('login',[AuthController::class,'login'])->name('api.login');
 Route::post('register',[AuthController::class,'register'])->name('api.register');
 Route::post('logout',[AuthController::class,'logout'])->name('api.logout');
 Route::post('me',[AuthController::class,'getAuthenticatedUser'])->name('api.me');
-Route::resource('albums',AlbumController::class);
+Route::resource('albums',AlbumController::class)->except(['edit','create']);

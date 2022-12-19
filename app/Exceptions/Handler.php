@@ -2,11 +2,14 @@
 
 namespace App\Exceptions;
 
+use App\Traits\HandlerApiResponse;
+use Exception;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
-use Throwable;
 
 class Handler extends ExceptionHandler
 {
+
+    use HandlerApiResponse;
     /**
      * A list of the exception types that are not reported.
      *
@@ -32,10 +35,14 @@ class Handler extends ExceptionHandler
      *
      * @return void
      */
+
     public function register()
     {
-        $this->reportable(function (Throwable $e) {
-            //
+        $this->renderable(function (Exception $e, $request) {
+
+            if ($request->wantsJson()) {   //add Accept: application/json in request
+                return $this->handleApiException($request, $e);
+            }
         });
     }
 }

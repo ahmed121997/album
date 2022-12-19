@@ -64,15 +64,15 @@ if(!function_exists('sendResponse')){
  */
 if(!function_exists('sendError')){
 
-    function sendError($error, $errorMessages =[], $code = 404){
+    function sendError($error, $errorMessages =[], $code = 500){
         $respone = [
             'success' => false,
             'message'    => $error
         ];
 
-            if(!empty($errormessage)){
+            if(!empty($errorMessages)){
 
-                $respone['data'] = $errormessage;
+                $respone['data'] = $errorMessages;
             }
         return response()->json($respone,$code);
     }
